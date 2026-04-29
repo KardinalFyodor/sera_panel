@@ -1,0 +1,286 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --green:#1D9E75;--green-light:#E1F5EE;--green-mid:#9FE1CB;
+    --amber:#EF9F27;--amber-light:#FAEEDA;
+    --red:#E24B4A;--red-light:#FCEBEB;
+    --blue:#378ADD;--blue-light:#E6F1FB;
+    --sera1:#085041;--sera2:#BA7517;
+  }
+  body{font-family:'DM Sans',sans-serif;background:transparent;color:var(--color-text-primary)}
+  .dash{padding:1rem 0}
+  .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+  .title{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--color-text-secondary)}
+  .live-badge{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--green);font-weight:500}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+  .firebase-note{font-size:11px;color:var(--color-text-secondary);background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:6px 10px;margin-bottom:1.5rem;font-family:'Space Mono',monospace}
+  .sera-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+  @media(max-width:600px){.sera-grid{grid-template-columns:1fr}}
+  .sera-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+  .sera-header{padding:14px 16px 10px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;justify-content:space-between}
+  .sera-name{font-size:15px;font-weight:600}
+  .sera-plant{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+  .sera-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px}
+  .metrics{padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .metric{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
+  .metric-label{font-size:11px;color:var(--color-text-secondary);font-family:'Space Mono',monospace;letter-spacing:0.5px}
+  .metric-val{font-size:20px;font-weight:600;margin-top:2px;font-family:'Space Mono',monospace}
+  .metric-unit{font-size:12px;font-weight:400;color:var(--color-text-secondary)}
+  .alerts-section{margin-bottom:1.5rem}
+  .alerts-title{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:10px}
+  .alert-list{display:flex;flex-direction:column;gap:8px}
+  .alert-item{border-radius:var(--border-radius-md);padding:12px 14px;display:flex;align-items:flex-start;gap:10px;border:0.5px solid}
+  .alert-danger{background:var(--red-light);border-color:#F09595;color:#A32D2D}
+  .alert-warn{background:var(--amber-light);border-color:#FAC775;color:#854F0B}
+  .alert-ok{background:var(--green-light);border-color:var(--green-mid);color:var(--sera1)}
+  .alert-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+  .alert-text{font-size:13px;font-weight:500;line-height:1.4}
+  .alert-sub{font-size:11px;opacity:.8;margin-top:2px}
+  .controls-section{margin-bottom:1rem}
+  .controls-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+  .ctrl-btn{border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:12px;cursor:pointer;background:var(--color-background-primary);text-align:left;transition:all .15s;position:relative;overflow:hidden}
+  .ctrl-btn:hover{background:var(--color-background-secondary)}
+  .ctrl-btn.active{border-color:var(--green);background:var(--green-light)}
+  .ctrl-btn.active .ctrl-status{color:var(--green)}
+  .ctrl-name{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+  .ctrl-sera{font-size:10px;color:var(--color-text-secondary);margin-top:2px;font-family:'Space Mono',monospace}
+  .ctrl-status{font-size:11px;margin-top:6px;font-weight:600;color:var(--color-text-secondary);font-family:'Space Mono',monospace}
+  .ctrl-icon{font-size:18px;margin-bottom:6px}
+  .gauge-wrap{padding:0 16px 14px}
+  .gauge-bar-bg{height:6px;border-radius:3px;background:var(--color-background-secondary);margin-top:6px;overflow:hidden}
+  .gauge-bar{height:100%;border-radius:3px;transition:width .5s ease}
+  .gauge-label{display:flex;justify-content:space-between;font-size:10px;color:var(--color-text-secondary);font-family:'Space Mono',monospace;margin-top:3px}
+  .refresh-row{display:flex;align-items:center;justify-content:space-between;margin-top:1rem;padding-top:1rem;border-top:0.5px solid var(--color-border-tertiary)}
+  .last-update{font-size:11px;color:var(--color-text-secondary);font-family:'Space Mono',monospace}
+  .refresh-btn{font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:6px 12px;cursor:pointer;background:transparent;color:var(--color-text-primary);font-family:'DM Sans',sans-serif}
+  .refresh-btn:hover{background:var(--color-background-secondary)}
+</style>
+
+<h2 class="sr-only">Sera izleme ve kontrol paneli — iki sera için sensör verileri ve uyarılar</h2>
+
+<div class="dash">
+  <div class="header">
+    <span class="title">🌿 Sera Kontrol Paneli</span>
+    <span class="live-badge"><span class="dot"></span>Canlı</span>
+  </div>
+
+  <div class="firebase-note" id="fbNote">⬡ Firebase: greenhouse-ecbe0 · europe-west1 · bağlanıyor...</div>
+
+  <div class="sera-grid" id="seraGrid">
+    <div class="sera-card" id="card1">
+      <div class="sera-header">
+        <div>
+          <div class="sera-name">Sera 1</div>
+          <div class="sera-plant">Aloe Vera</div>
+        </div>
+        <div class="sera-icon" style="background:#E1F5EE">🌵</div>
+      </div>
+      <div class="metrics" id="metrics1">
+        <div class="metric"><div class="metric-label">SICAKLIK</div><div class="metric-val" id="s1-temp">--<span class="metric-unit">°C</span></div></div>
+        <div class="metric"><div class="metric-label">NEM</div><div class="metric-val" id="s1-hum">--<span class="metric-unit">%</span></div></div>
+        <div class="metric"><div class="metric-label">TOPRAK</div><div class="metric-val" id="s1-soil">--<span class="metric-unit">%</span></div></div>
+        <div class="metric"><div class="metric-label">IŞIK</div><div class="metric-val" id="s1-ldr">--<span class="metric-unit">lx</span></div></div>
+      </div>
+      <div class="gauge-wrap">
+        <div class="gauge-label"><span>Toprak Nemi</span><span id="s1-soilPct">--%</span></div>
+        <div class="gauge-bar-bg"><div class="gauge-bar" id="s1-gauge" style="width:0%;background:var(--green)"></div></div>
+        <div class="gauge-label"><span>0</span><span>100</span></div>
+      </div>
+    </div>
+
+    <div class="sera-card" id="card2">
+      <div class="sera-header">
+        <div>
+          <div class="sera-name">Sera 2</div>
+          <div class="sera-plant">Kaktüs</div>
+        </div>
+        <div class="sera-icon" style="background:#FAEEDA">🌵</div>
+      </div>
+      <div class="metrics" id="metrics2">
+        <div class="metric"><div class="metric-label">SICAKLIK</div><div class="metric-val" id="s2-temp">--<span class="metric-unit">°C</span></div></div>
+        <div class="metric"><div class="metric-label">NEM</div><div class="metric-val" id="s2-hum">--<span class="metric-unit">%</span></div></div>
+        <div class="metric"><div class="metric-label">TOPRAK</div><div class="metric-val" id="s2-soil">--<span class="metric-unit">%</span></div></div>
+        <div class="metric"><div class="metric-label">IŞIK</div><div class="metric-val" id="s2-ldr">--<span class="metric-unit">lx</span></div></div>
+      </div>
+      <div class="gauge-wrap">
+        <div class="gauge-label"><span>Toprak Nemi</span><span id="s2-soilPct">--%</span></div>
+        <div class="gauge-bar-bg"><div class="gauge-bar" id="s2-gauge" style="width:0%;background:var(--amber)"></div></div>
+        <div class="gauge-label"><span>0</span><span>100</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alerts-section">
+    <div class="alerts-title">Uyarılar & Öneriler</div>
+    <div class="alert-list" id="alertList">
+      <div class="alert-item alert-ok">
+        <span class="alert-icon">⏳</span>
+        <div><div class="alert-text">Veri bekleniyor...</div><div class="alert-sub">Firebase'den veri çekiliyor</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls-section">
+    <div class="alerts-title">Kontroller (Simülasyon)</div>
+    <div class="controls-grid" id="ctrlGrid">
+      <button class="ctrl-btn" onclick="toggle(this)" data-key="klima1">
+        <div class="ctrl-icon">❄️</div>
+        <div class="ctrl-name">Klima</div>
+        <div class="ctrl-sera">SERA 1</div>
+        <div class="ctrl-status">KAPALI</div>
+      </button>
+      <button class="ctrl-btn" onclick="toggle(this)" data-key="sulama1">
+        <div class="ctrl-icon">💧</div>
+        <div class="ctrl-name">Sulama</div>
+        <div class="ctrl-sera">SERA 1</div>
+        <div class="ctrl-status">KAPALI</div>
+      </button>
+      <button class="ctrl-btn" onclick="toggle(this)" data-key="uv1">
+        <div class="ctrl-icon">☀️</div>
+        <div class="ctrl-name">UV Işık</div>
+        <div class="ctrl-sera">SERA 1</div>
+        <div class="ctrl-status">KAPALI</div>
+      </button>
+      <button class="ctrl-btn" onclick="toggle(this)" data-key="klima2">
+        <div class="ctrl-icon">❄️</div>
+        <div class="ctrl-name">Klima</div>
+        <div class="ctrl-sera">SERA 2</div>
+        <div class="ctrl-status">KAPALI</div>
+      </button>
+      <button class="ctrl-btn" onclick="toggle(this)" data-key="sulama2">
+        <div class="ctrl-icon">💧</div>
+        <div class="ctrl-name">Sulama</div>
+        <div class="ctrl-sera">SERA 2</div>
+        <div class="ctrl-status">KAPALI</div>
+      </button>
+      <button class="ctrl-btn" onclick="toggle(this)" data-key="uv2">
+        <div class="ctrl-icon">☀️</div>
+        <div class="ctrl-name">UV Işık</div>
+        <div class="ctrl-sera">SERA 2</div>
+        <div class="ctrl-status">KAPALI</div>
+      </button>
+    </div>
+  </div>
+
+  <div class="refresh-row">
+    <span class="last-update" id="lastUpdate">Son güncelleme: --</span>
+    <button class="refresh-btn" onclick="fetchData()">↻ Yenile</button>
+  </div>
+</div>
+
+<script>
+const FB_URL = "https://greenhouse-ecbe0-default-rtdb.europe-west1.firebasedatabase.app";
+
+function toggle(btn){
+  const active = btn.classList.toggle('active');
+  btn.querySelector('.ctrl-status').textContent = active ? 'AÇIK' : 'KAPALI';
+}
+
+function setVal(id, val, unit){
+  const el = document.getElementById(id);
+  if(el) el.innerHTML = val + '<span class="metric-unit">' + unit + '</span>';
+}
+
+function getColor(val, low, high){
+  if(val > high) return 'var(--red)';
+  if(val < low) return 'var(--blue)';
+  return 'var(--green)';
+}
+
+function buildAlerts(d1, d2){
+  const alerts = [];
+  const rules = [
+    {d:d2, label:'Kaktüs (Sera 2)', type:'temp', low:10, high:35, icon:'🌡️',
+      dangerHigh:'Sıcak uyarısı! Klimayı aç',highSub:'Sıcaklık kritik seviyede yüksek',
+      dangerLow:'Soğuk uyarısı! Isıtmayı aç',lowSub:'Kaktüs donma riskiyle karşı karşıya'},
+    {d:d2, label:'Kaktüs (Sera 2)', type:'soil', low:10, high:40, icon:'💧',
+      dangerHigh:'Toprak çok ıslak! Sulamayı durdur',highSub:'Kaktüs kök çürümesi riski',
+      dangerLow:'Toprak kuruyor, su ekle',lowSub:'%' + (d2 ? d2.soil : '--') + ' nem seviyesi'},
+    {d:d2, label:'Kaktüs (Sera 2)', type:'ldr', low:500, high:9999, icon:'☀️',
+      dangerHigh:'',highSub:'',
+      dangerLow:'Işık yetersiz! UV ışığı aç',lowSub:'Fotosentez için ışık gerekli'},
+    {d:d1, label:'Aloe Vera (Sera 1)', type:'temp', low:15, high:32, icon:'🌡️',
+      dangerHigh:'Aloe Vera için çok sıcak!',highSub:'Klimayı aç veya gölgele',
+      dangerLow:'Aloe için çok soğuk',lowSub:'Minimum 15°C gerekli'},
+    {d:d1, label:'Aloe Vera (Sera 1)', type:'soil', low:30, high:70, icon:'💧',
+      dangerHigh:'Toprak aşırı ıslak',highSub:'Drenajı kontrol et',
+      dangerLow:'Sulama zamanı',lowSub:'Aloe Vera nem seviyor'},
+  ];
+
+  rules.forEach(r => {
+    if(!r.d) return;
+    const v = r.d[r.type];
+    if(r.type === 'ldr' && v < r.low && r.dangerLow){
+      alerts.push({cls:'alert-warn', icon:r.icon, text:r.label + ': ' + r.dangerLow, sub:r.lowSub});
+    } else if(r.type !== 'ldr' && v > r.high && r.dangerHigh){
+      alerts.push({cls:'alert-danger', icon:r.icon, text:r.label + ': ' + r.dangerHigh, sub:r.highSub});
+    } else if(r.type !== 'ldr' && v < r.low && r.dangerLow){
+      alerts.push({cls:'alert-warn', icon:r.icon, text:r.label + ': ' + r.dangerLow, sub:r.lowSub});
+    }
+  });
+
+  const list = document.getElementById('alertList');
+  if(alerts.length === 0){
+    list.innerHTML = '<div class="alert-item alert-ok"><span class="alert-icon">✓</span><div><div class="alert-text">Her şey normal</div><div class="alert-sub">Tüm sensörler normal aralıkta</div></div></div>';
+  } else {
+    list.innerHTML = alerts.map(a => `<div class="alert-item ${a.cls}"><span class="alert-icon">${a.icon}</span><div><div class="alert-text">${a.text}</div><div class="alert-sub">${a.sub}</div></div></div>`).join('');
+  }
+}
+
+function updateCard(n, d){
+  if(!d) return;
+  setVal('s'+n+'-temp', d.temp.toFixed(1), '°C');
+  setVal('s'+n+'-hum', d.hum.toFixed(0), '%');
+  setVal('s'+n+'-soil', d.soil.toFixed(0), '%');
+  setVal('s'+n+'-ldr', d.ldr, 'lx');
+  document.getElementById('s'+n+'-soilPct').textContent = d.soil.toFixed(0) + '%';
+  const g = document.getElementById('s'+n+'-gauge');
+  g.style.width = Math.min(d.soil,100) + '%';
+  const tempEl = document.getElementById('s'+n+'-temp');
+  if(tempEl){
+    const hi = n==1?32:35, lo = n==1?15:10;
+    tempEl.style.color = d.temp>hi?'var(--red)':d.temp<lo?'var(--blue)':'var(--green)';
+  }
+}
+
+async function fetchData(){
+  const note = document.getElementById('fbNote');
+  note.textContent = '⬡ Firebase: greenhouse-ecbe0 · europe-west1 · bağlanıyor...';
+  try {
+    const [r1, r2] = await Promise.all([
+      fetch(FB_URL + '/sera1.json'),
+      fetch(FB_URL + '/sera2.json')
+    ]);
+    const d1 = await r1.json();
+    const d2 = await r2.json();
+    if(d1 && d1.temp !== undefined){
+      updateCard(1, d1);
+      updateCard(2, d2);
+      buildAlerts(d1, d2);
+      note.textContent = '✓ Firebase: greenhouse-ecbe0 · europe-west1 · bağlı';
+    } else {
+      note.textContent = '⚠ Firebase: Veri bulunamadı — Demo mod aktif';
+      loadDemo();
+    }
+  } catch(e){
+    note.textContent = '⚠ Firebase erişilemiyor — Demo mod aktif';
+    loadDemo();
+  }
+  const now = new Date();
+  document.getElementById('lastUpdate').textContent = 'Son güncelleme: ' + now.toLocaleTimeString('tr-TR');
+}
+
+function loadDemo(){
+  const d1 = {temp:24.5, hum:58, soil:52, ldr:3200};
+  const d2 = {temp:37.2, hum:22, soil:8, ldr:420};
+  updateCard(1, d1);
+  updateCard(2, d2);
+  buildAlerts(d1, d2);
+}
+
+fetchData();
+setInterval(fetchData, 5000);
+</script>
