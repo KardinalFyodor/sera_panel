@@ -1,0 +1,259 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:transparent;color:var(--color-text-primary)}
+  .dash{padding:1rem 0}
+  .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+  .title{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--color-text-secondary)}
+  .live-badge{display:flex;align-items:center;gap:6px;font-size:12px;color:#1D9E75;font-weight:500}
+  .dot{width:8px;height:8px;border-radius:50%;background:#1D9E75;animation:pulse 0.5s infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.4)}}
+  .firebase-note{font-size:11px;color:var(--color-text-secondary);background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:6px 10px;margin-bottom:1.5rem;font-family:'Space Mono',monospace}
+  .sera-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+  @media(max-width:600px){.sera-grid{grid-template-columns:1fr}}
+  .sera-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+  .sera-header{padding:14px 16px 10px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;justify-content:space-between}
+  .sera-name{font-size:15px;font-weight:600}
+  .sera-plant{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+  .sera-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px}
+  .metrics{padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .metric{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;position:relative;overflow:hidden}
+  .metric-label{font-size:11px;color:var(--color-text-secondary);font-family:'Space Mono',monospace;letter-spacing:0.5px}
+  .metric-val{font-size:20px;font-weight:600;margin-top:2px;font-family:'Space Mono',monospace;transition:color .2s}
+  .metric-unit{font-size:12px;font-weight:400;color:var(--color-text-secondary)}
+  .flash{animation:flashUp .3s ease}
+  @keyframes flashUp{0%{opacity:.3;transform:translateY(4px)}100%{opacity:1;transform:translateY(0)}}
+  .alerts-section{margin-bottom:1.5rem}
+  .alerts-title{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:10px}
+  .alert-list{display:flex;flex-direction:column;gap:8px}
+  .alert-item{border-radius:var(--border-radius-md);padding:12px 14px;display:flex;align-items:flex-start;gap:10px;border:0.5px solid;animation:slideIn .2s ease}
+  @keyframes slideIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
+  .alert-danger{background:#FCEBEB;border-color:#F09595;color:#A32D2D}
+  .alert-warn{background:#FAEEDA;border-color:#FAC775;color:#854F0B}
+  .alert-ok{background:#E1F5EE;border-color:#9FE1CB;color:#085041}
+  .alert-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+  .alert-text{font-size:13px;font-weight:500;line-height:1.4}
+  .alert-sub{font-size:11px;opacity:.8;margin-top:2px}
+  .controls-section{margin-bottom:1rem}
+  .controls-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+  .ctrl-btn{border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:12px;cursor:pointer;background:var(--color-background-primary);text-align:left;transition:all .15s}
+  .ctrl-btn:hover{background:var(--color-background-secondary)}
+  .ctrl-btn.active{border-color:#1D9E75;background:#E1F5EE}
+  .ctrl-btn.active .ctrl-status{color:#1D9E75}
+  .ctrl-name{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+  .ctrl-sera{font-size:10px;color:var(--color-text-secondary);margin-top:2px;font-family:'Space Mono',monospace}
+  .ctrl-status{font-size:11px;margin-top:6px;font-weight:600;color:var(--color-text-secondary);font-family:'Space Mono',monospace}
+  .ctrl-icon{font-size:18px;margin-bottom:6px}
+  .gauge-wrap{padding:0 16px 14px}
+  .gauge-bar-bg{height:6px;border-radius:3px;background:var(--color-background-secondary);margin-top:6px;overflow:hidden}
+  .gauge-bar{height:100%;border-radius:3px;transition:width .3s ease}
+  .gauge-label{display:flex;justify-content:space-between;font-size:10px;color:var(--color-text-secondary);font-family:'Space Mono',monospace;margin-top:3px}
+  .refresh-row{display:flex;align-items:center;justify-content:space-between;margin-top:1rem;padding-top:1rem;border-top:0.5px solid var(--color-border-tertiary)}
+  .last-update{font-size:11px;color:var(--color-text-secondary);font-family:'Space Mono',monospace}
+  .speed-badge{font-size:10px;font-family:'Space Mono',monospace;background:#E1F5EE;color:#085041;border:0.5px solid #9FE1CB;border-radius:var(--border-radius-md);padding:3px 8px}
+</style>
+
+<h2 class="sr-only">Sera izleme paneli — 500ms yenileme hızıyla canlı sensör verileri</h2>
+
+<div class="dash">
+  <div class="header">
+    <span class="title">🌿 Sera Kontrol Paneli</span>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="speed-badge">⚡ 500ms</span>
+      <span class="live-badge"><span class="dot"></span>Canlı</span>
+    </div>
+  </div>
+
+  <div class="firebase-note" id="fbNote">⬡ Firebase: greenhouse-ecbe0 · europe-west1 · bağlanıyor...</div>
+
+  <div class="sera-grid">
+    <div class="sera-card">
+      <div class="sera-header">
+        <div><div class="sera-name">Sera 1</div><div class="sera-plant">Aloe Vera</div></div>
+        <div class="sera-icon" style="background:#E1F5EE">🌱</div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">SICAKLIK</div><div class="metric-val" id="s1-temp">--<span class="metric-unit">°C</span></div></div>
+        <div class="metric"><div class="metric-label">NEM</div><div class="metric-val" id="s1-hum">--<span class="metric-unit">%</span></div></div>
+        <div class="metric"><div class="metric-label">TOPRAK</div><div class="metric-val" id="s1-soil">--<span class="metric-unit">%</span></div></div>
+        <div class="metric"><div class="metric-label">IŞIK</div><div class="metric-val" id="s1-ldr">--<span class="metric-unit">lx</span></div></div>
+      </div>
+      <div class="gauge-wrap">
+        <div class="gauge-label"><span>Toprak Nemi</span><span id="s1-soilPct">--%</span></div>
+        <div class="gauge-bar-bg"><div class="gauge-bar" id="s1-gauge" style="width:0%;background:#1D9E75"></div></div>
+        <div class="gauge-label"><span>0</span><span>100</span></div>
+      </div>
+    </div>
+
+    <div class="sera-card">
+      <div class="sera-header">
+        <div><div class="sera-name">Sera 2</div><div class="sera-plant">Kaktüs</div></div>
+        <div class="sera-icon" style="background:#FAEEDA">🌵</div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">SICAKLIK</div><div class="metric-val" id="s2-temp">--<span class="metric-unit">°C</span></div></div>
+        <div class="metric"><div class="metric-label">NEM</div><div class="metric-val" id="s2-hum">--<span class="metric-unit">%</span></div></div>
+        <div class="metric"><div class="metric-label">TOPRAK</div><div class="metric-val" id="s2-soil">--<span class="metric-unit">%</span></div></div>
+        <div class="metric"><div class="metric-label">IŞIK</div><div class="metric-val" id="s2-ldr">--<span class="metric-unit">lx</span></div></div>
+      </div>
+      <div class="gauge-wrap">
+        <div class="gauge-label"><span>Toprak Nemi</span><span id="s2-soilPct">--%</span></div>
+        <div class="gauge-bar-bg"><div class="gauge-bar" id="s2-gauge" style="width:0%;background:#EF9F27"></div></div>
+        <div class="gauge-label"><span>0</span><span>100</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alerts-section">
+    <div class="alerts-title">Uyarılar & Öneriler</div>
+    <div class="alert-list" id="alertList">
+      <div class="alert-item alert-ok"><span class="alert-icon">⏳</span><div><div class="alert-text">Veri bekleniyor...</div><div class="alert-sub">Firebase bağlantısı kuruluyor</div></div></div>
+    </div>
+  </div>
+
+  <div class="controls-section">
+    <div class="alerts-title">Kontroller (Simülasyon)</div>
+    <div class="controls-grid">
+      <button class="ctrl-btn" onclick="toggle(this)"><div class="ctrl-icon">❄️</div><div class="ctrl-name">Klima</div><div class="ctrl-sera">SERA 1</div><div class="ctrl-status">KAPALI</div></button>
+      <button class="ctrl-btn" onclick="toggle(this)"><div class="ctrl-icon">💧</div><div class="ctrl-name">Sulama</div><div class="ctrl-sera">SERA 1</div><div class="ctrl-status">KAPALI</div></button>
+      <button class="ctrl-btn" onclick="toggle(this)"><div class="ctrl-icon">☀️</div><div class="ctrl-name">UV Işık</div><div class="ctrl-sera">SERA 1</div><div class="ctrl-status">KAPALI</div></button>
+      <button class="ctrl-btn" onclick="toggle(this)"><div class="ctrl-icon">❄️</div><div class="ctrl-name">Klima</div><div class="ctrl-sera">SERA 2</div><div class="ctrl-status">KAPALI</div></button>
+      <button class="ctrl-btn" onclick="toggle(this)"><div class="ctrl-icon">💧</div><div class="ctrl-name">Sulama</div><div class="ctrl-sera">SERA 2</div><div class="ctrl-status">KAPALI</div></button>
+      <button class="ctrl-btn" onclick="toggle(this)"><div class="ctrl-icon">☀️</div><div class="ctrl-name">UV Işık</div><div class="ctrl-sera">SERA 2</div><div class="ctrl-status">KAPALI</div></button>
+    </div>
+  </div>
+
+  <div class="refresh-row">
+    <span class="last-update" id="lastUpdate">Son güncelleme: --</span>
+    <span class="last-update" id="reqCount" style="margin-left:8px">0 istek</span>
+  </div>
+</div>
+
+<script>
+const FB = "https://greenhouse-ecbe0-default-rtdb.europe-west1.firebasedatabase.app";
+let reqCount = 0, prevVals = {}, demoMode = false, demoData = null;
+
+function toggle(btn){
+  const a = btn.classList.toggle('active');
+  btn.querySelector('.ctrl-status').textContent = a ? 'AÇIK' : 'KAPALI';
+}
+
+function flash(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.classList.remove('flash');
+  void el.offsetWidth;
+  el.classList.add('flash');
+}
+
+function setVal(id, raw, unit, lo, hi){
+  const el = document.getElementById(id);
+  if(!el) return;
+  const prev = prevVals[id];
+  const display = typeof raw === 'number' ? (Number.isInteger(raw) ? raw : raw.toFixed(1)) : raw;
+  if(prev !== display){
+    el.innerHTML = display + '<span class="metric-unit">' + unit + '</span>';
+    if(typeof raw === 'number' && lo !== undefined){
+      el.style.color = raw > hi ? '#E24B4A' : raw < lo ? '#378ADD' : '#1D9E75';
+    }
+    flash(id);
+    prevVals[id] = display;
+  }
+}
+
+function buildAlerts(d1, d2){
+  const alerts = [];
+  const checks = [
+    {d:d2,label:'Kaktüs (Sera 2)',f:'temp',lo:10,hi:35,icon:'🌡️',
+      Htext:'Sıcak uyarısı! Klimayı aç',Hsub:'Sıcaklık kritik — '+d2.temp.toFixed(1)+'°C',
+      Ltext:'Soğuk uyarısı! Isıtmayı aç',Lsub:'Kaktüs donma riski'},
+    {d:d2,label:'Kaktüs (Sera 2)',f:'soil',lo:10,hi:40,icon:'💧',
+      Htext:'Toprak çok ıslak! Sulamayı durdur',Hsub:'Kök çürümesi riski',
+      Ltext:'Toprak kuruyor, su ekle',Lsub:'%'+d2.soil+' nem seviyesi'},
+    {d:d2,label:'Kaktüs (Sera 2)',f:'ldr',lo:500,hi:9999,icon:'☀️',
+      Ltext:'Işık yetersiz! UV ışığı aç',Lsub:'Fotosentez için ışık gerekli'},
+    {d:d1,label:'Aloe Vera (Sera 1)',f:'temp',lo:15,hi:32,icon:'🌡️',
+      Htext:'Aloe için çok sıcak! Klimayı aç',Hsub:'Maksimum 32°C',
+      Ltext:'Aloe için çok soğuk',Lsub:'Minimum 15°C gerekli'},
+    {d:d1,label:'Aloe Vera (Sera 1)',f:'soil',lo:30,hi:70,icon:'💧',
+      Htext:'Toprak aşırı ıslak',Hsub:'Drenajı kontrol et',
+      Ltext:'Sulama zamanı',Lsub:'Aloe Vera nem seviyor'},
+  ];
+  checks.forEach(c => {
+    const v = c.d[c.f];
+    if(v > c.hi && c.Htext) alerts.push({cls:'alert-danger',icon:c.icon,text:c.label+': '+c.Htext,sub:c.Hsub});
+    else if(v < c.lo && c.Ltext) alerts.push({cls:'alert-warn',icon:c.icon,text:c.label+': '+c.Ltext,sub:c.Lsub});
+  });
+  const list = document.getElementById('alertList');
+  const html = alerts.length === 0
+    ? '<div class="alert-item alert-ok"><span class="alert-icon">✓</span><div><div class="alert-text">Her şey normal</div><div class="alert-sub">Tüm sensörler normal aralıkta</div></div></div>'
+    : alerts.map(a=>`<div class="alert-item ${a.cls}"><span class="alert-icon">${a.icon}</span><div><div class="alert-text">${a.text}</div><div class="alert-sub">${a.sub}</div></div></div>`).join('');
+  if(list.innerHTML !== html) list.innerHTML = html;
+}
+
+function updateCard(n, d){
+  const limits = n==1 ? {tlo:15,thi:32} : {tlo:10,thi:35};
+  setVal('s'+n+'-temp', d.temp, '°C', limits.tlo, limits.thi);
+  setVal('s'+n+'-hum', d.hum, '%', 20, 80);
+  setVal('s'+n+'-soil', d.soil, '%', 20, 60);
+  setVal('s'+n+'-ldr', d.ldr, 'lx');
+  document.getElementById('s'+n+'-soilPct').textContent = Math.round(d.soil)+'%';
+  document.getElementById('s'+n+'-gauge').style.width = Math.min(d.soil,100)+'%';
+}
+
+function getDemoData(){
+  if(!demoData){
+    demoData = {
+      d1:{temp:24.5,hum:58,soil:52,ldr:3200},
+      d2:{temp:37.2,hum:22,soil:8,ldr:420}
+    };
+  }
+  demoData.d1.temp += (Math.random()-.5)*.4;
+  demoData.d1.hum += (Math.random()-.5)*.3;
+  demoData.d1.soil += (Math.random()-.5)*.2;
+  demoData.d1.ldr += Math.round((Math.random()-.5)*20);
+  demoData.d2.temp += (Math.random()-.5)*.5;
+  demoData.d2.hum += (Math.random()-.5)*.2;
+  demoData.d2.soil += (Math.random()-.5)*.15;
+  demoData.d2.ldr += Math.round((Math.random()-.5)*15);
+  demoData.d1.temp = Math.max(14,Math.min(35,demoData.d1.temp));
+  demoData.d1.soil = Math.max(5,Math.min(95,demoData.d1.soil));
+  demoData.d2.temp = Math.max(9,Math.min(42,demoData.d2.temp));
+  demoData.d2.soil = Math.max(2,Math.min(60,demoData.d2.soil));
+  return demoData;
+}
+
+async function fetchData(){
+  reqCount++;
+  document.getElementById('reqCount').textContent = reqCount + ' istek';
+  document.getElementById('lastUpdate').textContent = 'Son: ' + new Date().toLocaleTimeString('tr-TR',{hour12:false});
+  if(demoMode){
+    const {d1,d2} = getDemoData();
+    updateCard(1,d1); updateCard(2,d2); buildAlerts(d1,d2);
+    return;
+  }
+  try {
+    const [r1,r2] = await Promise.all([
+      fetch(FB+'/sera1.json'),
+      fetch(FB+'/sera2.json')
+    ]);
+    const d1 = await r1.json();
+    const d2 = await r2.json();
+    if(d1 && d1.temp !== undefined){
+      document.getElementById('fbNote').textContent = '✓ Firebase: greenhouse-ecbe0 · europe-west1 · bağlı';
+      updateCard(1,d1); updateCard(2,d2); buildAlerts(d1,d2);
+    } else {
+      throw new Error('no data');
+    }
+  } catch(e){
+    demoMode = true;
+    document.getElementById('fbNote').textContent = '⚠ Firebase erişilemiyor — Demo mod (canlı simülasyon)';
+    const {d1,d2} = getDemoData();
+    updateCard(1,d1); updateCard(2,d2); buildAlerts(d1,d2);
+  }
+}
+
+fetchData();
+setInterval(fetchData, 500);
+</script>
